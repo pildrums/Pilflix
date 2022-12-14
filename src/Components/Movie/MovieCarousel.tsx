@@ -74,9 +74,11 @@ const boxVars = {
     scale: 1,
   },
   hover: {
-    scale: 1.1,
+    scale: 1.3,
+    y: -10,
     transition: {
       delay: 1.1,
+      type: "tween",
     },
   },
 };
