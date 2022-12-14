@@ -18,13 +18,25 @@ const offset = 6;
 function MovieCarousel({ data, carouselTitle }: IMovieCarouselProps) {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const [prev, setPrev] = useState(false);
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
       toggleLeaving();
       const totalMovies = data.results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
+      setPrev(false);
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+    }
+  };
+  const decreaseIndex = () => {
+    if (data) {
+      if (leaving) return;
+      toggleLeaving();
+      const totalMovies = data.results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
+      setPrev(true);
+      setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
     }
   };
   const toggleLeaving = () => setLeaving((prev) => !prev);
@@ -32,17 +44,29 @@ function MovieCarousel({ data, carouselTitle }: IMovieCarouselProps) {
     <Wrapper>
       <Carousel>
         <TitleContainer>
-          <CarouselTitle onClick={increaseIndex}>{carouselTitle}</CarouselTitle>
+          <CarouselTitle>{carouselTitle}</CarouselTitle>
           <ButtonContainer>
-            <PrevBtn variants={buttonVars} whileHover="hover">
+            <PrevBtn
+              variants={buttonVars}
+              whileHover="hover"
+              onClick={decreaseIndex}
+            >
               <MdOutlineKeyboardArrowLeft />
             </PrevBtn>
-            <NextBtn variants={buttonVars} whileHover="hover">
+            <NextBtn
+              variants={buttonVars}
+              whileHover="hover"
+              onClick={increaseIndex}
+            >
               <MdOutlineKeyboardArrowRight />
             </NextBtn>
           </ButtonContainer>
         </TitleContainer>
-        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+        <AnimatePresence
+          initial={false}
+          onExitComplete={toggleLeaving}
+          custom={prev}
+        >
           <Row
             variants={rowVars}
             initial="hidden"
@@ -50,6 +74,7 @@ function MovieCarousel({ data, carouselTitle }: IMovieCarouselProps) {
             exit="exit"
             key={index}
             transition={{ type: "tween", duration: 1 }}
+            custom={prev}
           >
             {data?.results
               .slice(1)
@@ -75,15 +100,15 @@ function MovieCarousel({ data, carouselTitle }: IMovieCarouselProps) {
 }
 
 const rowVars = {
-  hidden: {
-    x: window.outerWidth + 10,
-  },
+  hidden: (prev: boolean) => ({
+    x: prev ? -window.outerWidth : window.outerWidth,
+  }),
   visible: {
     x: 0,
   },
-  exit: {
-    x: -window.outerWidth - 10,
-  },
+  exit: (prev: boolean) => ({
+    x: prev ? window.outerWidth : -window.outerWidth,
+  }),
 };
 
 const boxVars = {
@@ -138,7 +163,7 @@ const TitleContainer = styled.div`
 
 const CarouselTitle = styled.div`
   font-size: 20px;
-  cursor: pointer;
+  user-select: none;
 `;
 
 const ButtonContainer = styled.div`
@@ -149,8 +174,8 @@ const ButtonContainer = styled.div`
 `;
 
 const NextBtn = styled(motion.button)`
-  background: ${props => props.theme.black.veryDark};
-  border: 2px solid ${props => props.theme.white.darker};
+  background: ${(props) => props.theme.black.veryDark};
+  border: 2px solid ${(props) => props.theme.white.darker};
   width: 30px;
   height: 30px;
   opacity: 0.3;
@@ -160,14 +185,14 @@ const NextBtn = styled(motion.button)`
   justify-content: center;
   align-items: center;
   svg {
-    color: ${props => props.theme.white.lighter};
+    color: ${(props) => props.theme.white.lighter};
     font-size: 24px;
   }
 `;
 
 const PrevBtn = styled(motion.button)`
-  background: ${props => props.theme.black.veryDark};
-  border: 2px solid ${props => props.theme.white.darker};
+  background: ${(props) => props.theme.black.veryDark};
+  border: 2px solid ${(props) => props.theme.white.darker};
   width: 30px;
   height: 30px;
   opacity: 0.3;
@@ -177,7 +202,7 @@ const PrevBtn = styled(motion.button)`
   justify-content: center;
   align-items: center;
   svg {
-    color: ${props => props.theme.white.lighter};
+    color: ${(props) => props.theme.white.lighter};
     font-size: 24px;
   }
 `;
