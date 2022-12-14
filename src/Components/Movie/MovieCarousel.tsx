@@ -19,6 +19,7 @@ function MovieCarousel({ data, carouselTitle }: IMovieCarouselProps) {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [prev, setPrev] = useState(false);
+  // setIndex 인자가 잘못된 것으로 예상(버그 발생)
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
@@ -29,6 +30,7 @@ function MovieCarousel({ data, carouselTitle }: IMovieCarouselProps) {
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
+  // setIndex 인자가 잘못된 것으로 예상(버그 발생)
   const decreaseIndex = () => {
     if (data) {
       if (leaving) return;
@@ -49,14 +51,14 @@ function MovieCarousel({ data, carouselTitle }: IMovieCarouselProps) {
             <PrevBtn
               variants={buttonVars}
               whileHover="hover"
-              onClick={decreaseIndex}
+              onClick={() => decreaseIndex()}
             >
               <MdOutlineKeyboardArrowLeft />
             </PrevBtn>
             <NextBtn
               variants={buttonVars}
               whileHover="hover"
-              onClick={increaseIndex}
+              onClick={() => increaseIndex()}
             >
               <MdOutlineKeyboardArrowRight />
             </NextBtn>
