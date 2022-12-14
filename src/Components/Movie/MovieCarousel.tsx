@@ -1,9 +1,12 @@
 import { IGetMoviesResult } from "API/movieAPI";
 import { makeImagePath } from "API/utils";
-import Loader from "Components/Loader";
 import { AnimatePresence, motion } from "framer-motion";
 import { memo, useState } from "react";
 import styled from "styled-components";
+import {
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+} from "react-icons/md";
 
 interface IMovieCarouselProps {
   data: IGetMoviesResult;
@@ -27,8 +30,18 @@ function MovieCarousel({ data, carouselTitle }: IMovieCarouselProps) {
   const toggleLeaving = () => setLeaving((prev) => !prev);
   return (
     <Wrapper>
-      <CarouselTitle onClick={increaseIndex}>{carouselTitle}</CarouselTitle>
       <Carousel>
+        <TitleContainer>
+          <CarouselTitle onClick={increaseIndex}>{carouselTitle}</CarouselTitle>
+          <ButtonContainer>
+            <PrevBtn variants={buttonVars} whileHover="hover">
+              <MdOutlineKeyboardArrowLeft />
+            </PrevBtn>
+            <NextBtn variants={buttonVars} whileHover="hover">
+              <MdOutlineKeyboardArrowRight />
+            </NextBtn>
+          </ButtonContainer>
+        </TitleContainer>
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
           <Row
             variants={rowVars}
@@ -48,7 +61,11 @@ function MovieCarousel({ data, carouselTitle }: IMovieCarouselProps) {
                   variants={boxVars}
                   initial="normal"
                   whileHover="hover"
-                />
+                >
+                  <Info variants={infoVars}>
+                    <h4>{movie.title}</h4>
+                  </Info>
+                </Box>
               ))}
           </Row>
         </AnimatePresence>
@@ -75,29 +92,94 @@ const boxVars = {
   },
   hover: {
     scale: 1.3,
-    y: -10,
+    y: -50,
     transition: {
       delay: 1.1,
+      duration: 0.3,
       type: "tween",
+    },
+  },
+};
+
+const infoVars = {
+  hover: {
+    opacity: 1,
+    transition: {
+      delay: 1.1,
+      duration: 0.3,
+      type: "tween",
+    },
+  },
+};
+
+const buttonVars = {
+  hover: {
+    opacity: 1,
+    transition: {
+      delay: 0.1,
+      type: "tween",
+      duration: 0.3,
     },
   },
 };
 
 const Wrapper = styled.div`
   position: relative;
-  margin-bottom: 250px;
-  @media all and (max-width: 500px) {
-    margin-bottom: 13vw;
-  }
+  margin-bottom: 300px;
+  padding: 0 10px;
+`;
+
+const TitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 20px;
 `;
 
 const CarouselTitle = styled.div`
-  position: relative;
-  top: -100px;
-  margin: 10px 0;
   font-size: 20px;
-  padding: 0 20px;
   cursor: pointer;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+`;
+
+const NextBtn = styled(motion.button)`
+  background: ${props => props.theme.black.veryDark};
+  border: 2px solid ${props => props.theme.white.darker};
+  width: 30px;
+  height: 30px;
+  opacity: 0.3;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  svg {
+    color: ${props => props.theme.white.lighter};
+    font-size: 24px;
+  }
+`;
+
+const PrevBtn = styled(motion.button)`
+  background: ${props => props.theme.black.veryDark};
+  border: 2px solid ${props => props.theme.white.darker};
+  width: 30px;
+  height: 30px;
+  opacity: 0.3;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  svg {
+    color: ${props => props.theme.white.lighter};
+    font-size: 24px;
+  }
 `;
 
 const Carousel = styled.div`
@@ -111,7 +193,6 @@ const Row = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 5px;
-  padding: 0 20px;
 `;
 
 const Box = styled(motion.div)<{ bgphoto: string }>`
@@ -131,43 +212,18 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
 `;
 
 const Info = styled(motion.div)`
-  padding: 20px;
+  padding: 10px;
   background: ${(props) => props.theme.black.lighter};
   opacity: 0;
-  position: relative;
+  position: absolute;
   width: 100%;
-  bottom: -200px;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   h4 {
     text-align: center;
-    font-size: 18px;
-  }
-`;
-
-const NextBtn = styled(motion.button)`
-  position: absolute;
-  background: #fff;
-  border: none;
-  height: 200px;
-  right: 0;
-  top: -66px;
-  opacity: 0;
-  cursor: pointer;
-  svg {
-    font-size: 18px;
-  }
-`;
-
-const PrevBtn = styled(motion.button)`
-  left: 0;
-  position: absolute;
-  background: #fff;
-  border: none;
-  height: 200px;
-  top: -66px;
-  opacity: 0;
-  cursor: pointer;
-  svg {
-    font-size: 18px;
+    font-size: 16px;
   }
 `;
 
