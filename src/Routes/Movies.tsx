@@ -7,6 +7,7 @@ import Loader from "Components/Loader";
 import MovieBanner from "Components/Movie/MovieBanner";
 import MovieCarousel from "Components/Movie/MovieCarousel";
 import { useQuery } from "react-query";
+import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const carouselTitle = {
@@ -16,6 +17,8 @@ const carouselTitle = {
 };
 
 function Movies() {
+  const navigate = useNavigate();
+  const movieMatch = useMatch("/movies/:movieId");
   const { data: nowData, isLoading: nowLoading } = useQuery(
     ["movies", "nowPlaying"],
     getNowMovies,
@@ -25,6 +28,9 @@ function Movies() {
     getPopularMovies,
   );
   const { data: upData } = useQuery(["movies", "upComing"], getUpcomingMovies);
+  const onBoxClicked = (movieId: number) => {
+    navigate(`/movies/${movieId}`);
+  };
   return (
     <Wrapper>
       {nowLoading ? (
@@ -35,12 +41,18 @@ function Movies() {
           <MovieCarousel
             data={nowData}
             carouselTitle={carouselTitle.nowPlaying}
+            onBoxClicked={onBoxClicked}
           />
           <MovieCarousel
             data={popularData}
             carouselTitle={carouselTitle.popular}
+            onBoxClicked={onBoxClicked}
           />
-          <MovieCarousel data={upData} carouselTitle={carouselTitle.upComing} />
+          <MovieCarousel
+            data={upData}
+            carouselTitle={carouselTitle.upComing}
+            onBoxClicked={onBoxClicked}
+          />
         </>
       )}
     </Wrapper>

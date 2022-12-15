@@ -1,5 +1,5 @@
 import { IGetMoviesResult } from "API/movieAPI";
-import { makeImagePath } from "API/utils";
+import { makeImagePath } from "utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { memo, useState } from "react";
 import styled from "styled-components";
@@ -11,11 +11,16 @@ import {
 interface IMovieCarouselProps {
   data: IGetMoviesResult;
   carouselTitle: string;
+  onBoxClicked: (movieId: number) => void;
 }
 
 const offset = 6;
 
-function MovieCarousel({ data, carouselTitle }: IMovieCarouselProps) {
+function MovieCarousel({
+  data,
+  carouselTitle,
+  onBoxClicked,
+}: IMovieCarouselProps) {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [prev, setPrev] = useState(false);
@@ -88,6 +93,7 @@ function MovieCarousel({ data, carouselTitle }: IMovieCarouselProps) {
                   variants={boxVars}
                   initial="normal"
                   whileHover="hover"
+                  onClick={() => onBoxClicked(movie.id)}
                 >
                   <Info variants={infoVars}>
                     <h4>{movie.title}</h4>

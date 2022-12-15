@@ -1,5 +1,5 @@
 import { IGetMoviesResult } from "API/movieAPI";
-import { makeImagePath } from "API/utils";
+import { makeImagePath } from "utils";
 import styled from "styled-components";
 
 interface IMovieBannerProps {
