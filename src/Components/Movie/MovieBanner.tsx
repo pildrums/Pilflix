@@ -1,19 +1,34 @@
 import { IGetMovies } from "API/movieAPI";
 import { makeImagePath } from "utils";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 interface IMovieBannerProps {
   data: IGetMovies | undefined;
 }
 
 function MovieBanner({ data }: IMovieBannerProps) {
+  const navigate = useNavigate();
+  const onBoxClicked = (movieId: number) => {
+    navigate(`/movies/${movieId}`);
+  };
   return (
-    <Banner bgphoto={makeImagePath(data?.playing_movie.results[0].backdrop_path || "")}>
+    <Banner
+      bgphoto={makeImagePath(
+        data?.playing_movie.results[0].backdrop_path || "",
+      )}
+    >
       <Title>{data?.playing_movie.results[0].title}</Title>
       <Overview>{data?.playing_movie.results[0].overview}</Overview>
       <BannerContent>
         <Vote>★ {data?.playing_movie.results[0].vote_average}</Vote>
-        <BannerButton>자세히보기</BannerButton>
+        <BannerButton
+          onClick={() =>
+            onBoxClicked(Number(data?.playing_movie.results[0].id))
+          }
+        >
+          자세히보기
+        </BannerButton>
       </BannerContent>
     </Banner>
   );
