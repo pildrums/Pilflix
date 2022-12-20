@@ -42,8 +42,24 @@ function MovieDetail({ movieMatch, movieId, rowIndex }: IMovieDetailProps) {
                 )})`,
               }}
             />
-            <CardTitle>{data?.movie_detail.title}</CardTitle>
-            <CardOverview>{data?.movie_detail.overview}</CardOverview>
+            <CardTitleContainer>
+              <CardTitle>{data?.movie_detail.title}</CardTitle>
+              <CardVote>
+                ★ {Number(data?.movie_detail.vote_average).toFixed(1)}
+              </CardVote>
+            </CardTitleContainer>
+            <CardContent>
+              <CardGenres>
+                {data?.movie_detail.genres.map((item) => (
+                  <li key={item.id}>{item.name}</li>
+                ))}
+              </CardGenres>
+              <CardOverview>{data?.movie_detail.overview}</CardOverview>
+              <CardTimeContainer>
+                <Release>개봉일: {data?.movie_detail.release_date}</Release>
+                <Runtime>상영 시간: {data?.movie_detail.runtime}분</Runtime>
+              </CardTimeContainer>
+            </CardContent>
           </Card>
         </>
       ) : null}
@@ -67,7 +83,7 @@ const Overlay = styled(motion.div)`
 `;
 
 const Card = styled(motion.div)`
-  width: 40vw;
+  width: 60vw;
   height: 80vh;
   background: ${(props) => props.theme.black.lighter};
   position: fixed;
@@ -75,6 +91,7 @@ const Card = styled(motion.div)`
   left: 0;
   right: 0;
   margin: 0 auto;
+  border-radius: 10px;
 `;
 
 const CardCover = styled.div`
@@ -82,21 +99,74 @@ const CardCover = styled.div`
   background-size: cover;
   background-position: center center;
   height: 400px;
+  border-radius: 10px 10px 0 0;
+`;
+
+const CardTitleContainer = styled.div`
+  position: relative;
+  top: -60px;
+  display: flex;
+  align-items: center;
 `;
 
 const CardTitle = styled.h2`
   color: ${(props) => props.theme.white.lighter};
-  padding: 20px;
+  padding: 0 20px;
   font-size: 32px;
+`;
+
+const CardVote = styled.span`
+  width: 80px;
+  background: transparent;
+  color: ${(props) => props.theme.white.lighter};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid ${(props) => props.theme.white.lighter};
+  border-radius: 10px;
+  user-select: none;
+`;
+
+const CardContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: relative;
-  top: -80px;
+`;
+
+const CardGenres = styled.ul`
+  display: flex;
+  gap: 10px;
+  padding: 0 20px;
+  position: absolute;
+  top: -15px;
+  li {
+    border: 2px solid ${(props) => props.theme.white.lighter};
+    text-align: center;
+    line-height: 40px;
+    border-radius: 10px;
+    padding: 0 15px;
+  }
 `;
 
 const CardOverview = styled.p`
   padding: 20px;
-  position: relative;
-  top: -80px;
+  position: absolute;
+  top: 30px;
   color: ${(props) => props.theme.white.lighter};
 `;
+
+const CardTimeContainer = styled.div`
+  position: absolute;
+  top: 230px;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+`;
+
+const Release = styled.span``;
+
+const Runtime = styled.span``;
 
 export default MovieDetail;
