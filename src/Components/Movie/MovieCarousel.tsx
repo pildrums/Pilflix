@@ -1,5 +1,5 @@
 import { IGetMoviesResult } from "API/movieAPI";
-import { makeImagePath } from "utils";
+import { makeImagePath, useWindowDimensions } from "utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { memo, useState } from "react";
 import styled from "styled-components";
@@ -9,9 +9,10 @@ import {
 } from "react-icons/md";
 
 interface IMovieCarouselProps {
-  data: IGetMoviesResult;
+  data: IGetMoviesResult | undefined;
   carouselTitle: string;
-  onBoxClicked: (movieId: number) => void;
+  onBoxClicked: (movieId: number, rowIndex: number) => void;
+  rowIndex: number;
 }
 
 const offset = 6;
@@ -20,30 +21,35 @@ function MovieCarousel({
   data,
   carouselTitle,
   onBoxClicked,
+  rowIndex,
 }: IMovieCarouselProps) {
-  const [index, setIndex] = useState(0);
+  const width = useWindowDimensions();
+  const [index, setIndex] = useState<number[]>([0, 0, 0]);
   const [leaving, setLeaving] = useState(false);
-  const [prev, setPrev] = useState(false);
-  // setIndex 인자가 잘못된 것으로 예상(버그 발생)
-  const increaseIndex = () => {
+  const [next, setNext] = useState(false);
+  const custom = { next, width };
+  const changeIndex = (next: boolean, rowIndex: number) => {
     if (data) {
       if (leaving) return;
-      toggleLeaving();
+      setLeaving(true);
+      setNext(next);
       const totalMovies = data.results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
-      setPrev(false);
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
-    }
-  };
-  // setIndex 인자가 잘못된 것으로 예상(버그 발생)
-  const decreaseIndex = () => {
-    if (data) {
-      if (leaving) return;
-      toggleLeaving();
-      const totalMovies = data.results.length - 1;
-      const maxIndex = Math.floor(totalMovies / offset) - 1;
-      setPrev(true);
-      setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+      next
+        ? setIndex((prev) => {
+            const result = [...prev];
+            result[rowIndex] === maxIndex
+              ? (result[rowIndex] = 0)
+              : (result[rowIndex] += 1);
+            return result;
+          })
+        : setIndex((prev) => {
+            const result = [...prev];
+            result[rowIndex] === 0
+              ? (result[rowIndex] = maxIndex)
+              : (result[rowIndex] -= 1);
+            return result;
+          });
     }
   };
   const toggleLeaving = () => setLeaving((prev) => !prev);
@@ -56,14 +62,16 @@ function MovieCarousel({
             <PrevBtn
               variants={buttonVars}
               whileHover="hover"
-              onClick={() => decreaseIndex()}
+              onClick={() => changeIndex(false, rowIndex)}
+              key="prev"
             >
               <MdOutlineKeyboardArrowLeft />
             </PrevBtn>
             <NextBtn
               variants={buttonVars}
               whileHover="hover"
-              onClick={() => increaseIndex()}
+              onClick={() => changeIndex(true, rowIndex)}
+              key="next"
             >
               <MdOutlineKeyboardArrowRight />
             </NextBtn>
@@ -72,35 +80,59 @@ function MovieCarousel({
         <AnimatePresence
           initial={false}
           onExitComplete={toggleLeaving}
-          custom={prev}
+          custom={custom}
         >
           <Row
             variants={rowVars}
-            initial="hidden"
-            animate="visible"
+            initial="entry"
+            animate="center"
             exit="exit"
-            key={index}
+            key={index[rowIndex]}
             transition={{ type: "tween", duration: 1 }}
-            custom={prev}
+            custom={custom}
           >
-            {data?.results
-              .slice(1)
-              .slice(offset * index, offset * index + offset)
-              .map((movie) => (
-                <Box
-                  layoutId={String(movie.id)}
-                  key={movie.id}
-                  bgphoto={makeImagePath(movie.backdrop_path)}
-                  variants={boxVars}
-                  initial="normal"
-                  whileHover="hover"
-                  onClick={() => onBoxClicked(movie.id)}
-                >
-                  <Info variants={infoVars}>
-                    <h4>{movie.title}</h4>
-                  </Info>
-                </Box>
-              ))}
+            {rowIndex === 0
+              ? data?.results
+                  .slice(1)
+                  .slice(
+                    offset * index[rowIndex],
+                    offset * index[rowIndex] + offset,
+                  )
+                  .map((movie) => (
+                    <Box
+                      layoutId={String(rowIndex + "_" + movie.id)}
+                      key={movie.id}
+                      bgphoto={makeImagePath(movie.backdrop_path)}
+                      variants={boxVars}
+                      initial="normal"
+                      whileHover="hover"
+                      onClick={() => onBoxClicked(movie.id, rowIndex)}
+                    >
+                      <Info variants={infoVars}>
+                        <h4>{movie.title}</h4>
+                      </Info>
+                    </Box>
+                  ))
+              : data?.results
+                  .slice(
+                    offset * index[rowIndex],
+                    offset * index[rowIndex] + offset,
+                  )
+                  .map((movie) => (
+                    <Box
+                      layoutId={String(rowIndex + "_" + movie.id)}
+                      key={movie.id}
+                      bgphoto={makeImagePath(movie.backdrop_path)}
+                      variants={boxVars}
+                      initial="normal"
+                      whileHover="hover"
+                      onClick={() => onBoxClicked(movie.id, rowIndex)}
+                    >
+                      <Info variants={infoVars}>
+                        <h4>{movie.title}</h4>
+                      </Info>
+                    </Box>
+                  ))}
           </Row>
         </AnimatePresence>
       </Carousel>
@@ -109,15 +141,24 @@ function MovieCarousel({
 }
 
 const rowVars = {
-  hidden: (prev: boolean) => ({
-    x: prev ? -window.outerWidth : window.outerWidth,
-  }),
-  visible: {
-    x: 0,
+  entry: ({ next, width }: { next: boolean; width: number }) => {
+    return {
+      x: next ? width : -width,
+    };
   },
-  exit: (prev: boolean) => ({
-    x: prev ? window.outerWidth : -window.outerWidth,
-  }),
+  center: {
+    x: 0,
+    scale: 1,
+    transition: { duration: 1 },
+  },
+  exit: ({ next, width }: { next: boolean; width: number }) => {
+    return {
+      x: next ? -width : width,
+      transition: {
+        duration: 1,
+      },
+    };
+  },
 };
 
 const boxVars = {

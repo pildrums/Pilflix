@@ -1,13 +1,10 @@
-import {
-  getNowMovies,
-  getPopularMovies,
-  getUpcomingMovies,
-} from "API/movieAPI";
+import { getMovies, IGetMovies } from "API/movieAPI";
 import Loader from "Components/Loader";
 import MovieBanner from "Components/Movie/MovieBanner";
 import MovieCarousel from "Components/Movie/MovieCarousel";
 import MovieDetail from "Components/Movie/MovieDetail";
 import { AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -18,45 +15,53 @@ const carouselTitle = {
   upComing: "개봉 예정 영화",
 };
 
+const MOVIES = "movies";
+const NOWPLAYING = 0;
+const POPULAR = 1;
+const UPCOMING = 2;
+
 function Movies() {
   const navigate = useNavigate();
-  const movieMatch = useMatch("/movies/:movieId");
-  const { data: nowData, isLoading: nowLoading } = useQuery(
-    ["movies", "nowPlaying"],
-    getNowMovies,
-  );
-  const { data: popularData } = useQuery(
-    ["movies", "popular"],
-    getPopularMovies,
-  );
-  const { data: upData } = useQuery(["movies", "upComing"], getUpcomingMovies);
+  const movieMatch = useMatch(`/${MOVIES}/:movieId`);
+  const { data, isLoading } = useQuery<IGetMovies>(["movies"], getMovies);
+  const [rowIndex, setRowIndex] = useState<number | null>(null);
   const onBoxClicked = (movieId: number) => {
+    setRowIndex(rowIndex);
     navigate(`/movies/${movieId}`);
   };
   return (
     <Wrapper>
-      {nowLoading ? (
+      {isLoading ? (
         <Loader />
       ) : (
         <>
-          <MovieBanner data={nowData} />
+          <MovieBanner data={data} />
           <MovieCarousel
-            data={nowData}
+            data={data?.playing_movie}
             carouselTitle={carouselTitle.nowPlaying}
             onBoxClicked={onBoxClicked}
+            rowIndex={NOWPLAYING}
           />
           <MovieCarousel
-            data={popularData}
+            data={data?.popular_movie}
             carouselTitle={carouselTitle.popular}
             onBoxClicked={onBoxClicked}
+            rowIndex={POPULAR}
           />
           <MovieCarousel
-            data={upData}
+            data={data?.upComing_movie}
             carouselTitle={carouselTitle.upComing}
             onBoxClicked={onBoxClicked}
+            rowIndex={UPCOMING}
           />
           <AnimatePresence>
-            {movieMatch ? <MovieDetail movieMatch={movieMatch} /> : null}
+            {movieMatch ? (
+              <MovieDetail
+                movieMatch={movieMatch}
+                movieId={Number(movieMatch.params.movieId)}
+                index={rowIndex}
+              />
+            ) : null}
           </AnimatePresence>
         </>
       )}

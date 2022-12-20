@@ -1,18 +1,18 @@
-import { IGetMoviesResult } from "API/movieAPI";
+import { IGetMovies, IGetMoviesResult } from "API/movieAPI";
 import { makeImagePath } from "utils";
 import styled from "styled-components";
 
 interface IMovieBannerProps {
-  data: IGetMoviesResult;
+  data: IGetMovies | undefined;
 }
 
 function MovieBanner({ data }: IMovieBannerProps) {
   return (
-    <Banner bgphoto={makeImagePath(data.results[0].backdrop_path || "")}>
-      <Title>{data.results[0].title}</Title>
-      <Overview>{data.results[0].overview}</Overview>
+    <Banner bgphoto={makeImagePath(data?.playing_movie.results[0].backdrop_path || "")}>
+      <Title>{data?.playing_movie.results[0].title}</Title>
+      <Overview>{data?.playing_movie.results[0].overview}</Overview>
       <BannerContent>
-        <Vote>★ {data.results[0].vote_average}</Vote>
+        <Vote>★ {data?.playing_movie.results[0].vote_average}</Vote>
         <BannerButton>자세히보기</BannerButton>
       </BannerContent>
     </Banner>
