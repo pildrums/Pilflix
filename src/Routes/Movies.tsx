@@ -59,7 +59,7 @@ function Movies() {
               <MovieDetail
                 movieMatch={movieMatch}
                 movieId={Number(movieMatch.params.movieId)}
-                index={rowIndex}
+                rowIndex={rowIndex}
               />
             ) : null}
           </AnimatePresence>

@@ -1,4 +1,4 @@
-import { IGetMovies, IGetMoviesResult } from "API/movieAPI";
+import { IGetMovies } from "API/movieAPI";
 import { makeImagePath } from "utils";
 import styled from "styled-components";
 
