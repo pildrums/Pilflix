@@ -88,6 +88,7 @@ function MovieCarousel({
               .slice(offset * index, offset * index + offset)
               .map((movie) => (
                 <Box
+                  layoutId={String(movie.id)}
                   key={movie.id}
                   bgphoto={makeImagePath(movie.backdrop_path)}
                   variants={boxVars}

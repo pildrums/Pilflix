@@ -6,6 +6,8 @@ import {
 import Loader from "Components/Loader";
 import MovieBanner from "Components/Movie/MovieBanner";
 import MovieCarousel from "Components/Movie/MovieCarousel";
+import MovieDetail from "Components/Movie/MovieDetail";
+import { AnimatePresence } from "framer-motion";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -53,6 +55,9 @@ function Movies() {
             carouselTitle={carouselTitle.upComing}
             onBoxClicked={onBoxClicked}
           />
+          <AnimatePresence>
+            {movieMatch ? <MovieDetail movieMatch={movieMatch} /> : null}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
