@@ -2,6 +2,8 @@ import { getSeries, IGetSeries } from "API/SeriesAPI";
 import Loader from "Components/Loader";
 import SeriesBanner from "Components/Series/SeriesBanner";
 import SeriesCarousel from "Components/Series/SeriesCarousel";
+import SeriesDetail from "Components/Series/SeriesDetail";
+import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
@@ -52,6 +54,15 @@ function Series() {
             onBoxClicked={onBoxClicked}
             rowIndex={TOP_LATED}
           />
+          <AnimatePresence>
+            {seriesMatch ? (
+              <SeriesDetail
+                seriesMatch={seriesMatch}
+                seriesId={Number(seriesMatch.params.seriesId)}
+                rowIndex={rowIndex}
+              />
+            ) : null}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
