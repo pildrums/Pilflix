@@ -102,7 +102,7 @@ function SeriesCarousel({
                     <Box
                       layoutId={String(rowIndex + "_" + series.id)}
                       key={series.id}
-                      bgphoto={makeImagePath(series.backdrop_path)}
+                      bgphoto={makeImagePath(series.poster_path)}
                       variants={boxVars}
                       initial="normal"
                       whileHover="hover"
@@ -122,7 +122,7 @@ function SeriesCarousel({
                     <Box
                       layoutId={String(rowIndex + "_" + series.id)}
                       key={series.id}
-                      bgphoto={makeImagePath(series.backdrop_path)}
+                      bgphoto={makeImagePath(series.poster_path)}
                       variants={boxVars}
                       initial="normal"
                       whileHover="hover"

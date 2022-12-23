@@ -102,7 +102,7 @@ function MovieCarousel({
                     <Box
                       layoutId={String(rowIndex + "_" + movie.id)}
                       key={movie.id}
-                      bgphoto={makeImagePath(movie.backdrop_path)}
+                      bgphoto={makeImagePath(movie.poster_path)}
                       variants={boxVars}
                       initial="normal"
                       whileHover="hover"
@@ -122,7 +122,7 @@ function MovieCarousel({
                     <Box
                       layoutId={String(rowIndex + "_" + movie.id)}
                       key={movie.id}
-                      bgphoto={makeImagePath(movie.backdrop_path)}
+                      bgphoto={makeImagePath(movie.poster_path)}
                       variants={boxVars}
                       initial="normal"
                       whileHover="hover"

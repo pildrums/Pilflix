@@ -1,35 +1,30 @@
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
+import queryString from "query-string";
+import { useQuery } from "react-query";
+import { getSearch, IGetSearch } from "API/SearchAPI";
+import { makeImagePath } from "utils";
 
 function SeriesSearch() {
+  const location = useLocation();
+  const { keyword, id } = queryString.parse(location.search);
+  const { data, isLoading } = useQuery<IGetSearch>(["search", keyword], () =>
+    getSearch(String(keyword)),
+  );
   return (
     <Wrapper>
-      <SearchTitle>시리즈 검색결과</SearchTitle>
+      <SearchTitle>시리즈 검색결과 - {keyword}</SearchTitle>
       <SearchList>
-        <SearchItem variants={itemVars} whileHover="hover" exit="exit">
-          <SearchImg />
-          <SearchItemContent>
-            <SearchItemTitle>검색결과</SearchItemTitle>
-            <Vote>★ 0.0</Vote>
-          </SearchItemContent>
-          <Overview>상세 설명</Overview>
-        </SearchItem>
-        <SearchItem variants={itemVars} whileHover="hover" exit="exit">
-          <SearchImg />
-          <SearchItemContent>
-            <SearchItemTitle>검색결과</SearchItemTitle>
-            <Vote>★ 0.0</Vote>
-          </SearchItemContent>
-          <Overview>상세 설명</Overview>
-        </SearchItem>
-        <SearchItem variants={itemVars} whileHover="hover" exit="exit">
-          <SearchImg />
-          <SearchItemContent>
-            <SearchItemTitle>검색결과</SearchItemTitle>
-            <Vote>★ 0.0</Vote>
-          </SearchItemContent>
-          <Overview>상세 설명</Overview>
-        </SearchItem>
+        {data?.search_series.results.map((item) => (
+          <SearchItem variants={itemVars} whileHover="hover" exit="exit">
+            <SearchImg bgphoto={makeImagePath(item.poster_path)} />
+            <SearchItemContent>
+              <SearchItemTitle>{item.name}</SearchItemTitle>
+              <Vote>★ {item.vote_average}</Vote>
+            </SearchItemContent>
+          </SearchItem>
+        ))}
       </SearchList>
     </Wrapper>
   );
@@ -38,6 +33,9 @@ function SeriesSearch() {
 const itemVars = {
   hover: {
     scale: 1.1,
+    transition: {
+      duration: 0.6,
+    },
   },
   exit: {
     scale: 1,
@@ -53,9 +51,8 @@ const SearchTitle = styled.h2`
 `;
 
 const SearchList = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   margin: 40px 0;
 `;
@@ -69,10 +66,12 @@ const SearchItem = styled(motion.div)`
   gap: 40px;
 `;
 
-const SearchImg = styled.div`
-  width: 200px;
+const SearchImg = styled.div<{ bgphoto: string }>`
+  width: 100px;
   height: 150px;
-  background: coral;
+  background-image: url(${(props) => props.bgphoto});
+  background-size: cover;
+  background-position: center center;
   border-radius: 10px;
 `;
 
@@ -83,21 +82,19 @@ const SearchItemContent = styled.div`
 `;
 
 const SearchItemTitle = styled.h2`
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 400;
   user-select: none;
 `;
 
 const Vote = styled.div`
   border: 1px solid ${(props) => props.theme.white.darker};
-  padding: 8px;
   text-align: center;
   border-radius: 10px;
   user-select: none;
-`;
-
-const Overview = styled.p`
-  user-select: none;
+  width: 50px;
+  height: 40px;
+  line-height: 40px;
 `;
 
 export default SeriesSearch;

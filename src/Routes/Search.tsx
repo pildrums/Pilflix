@@ -1,10 +1,14 @@
 import MovieSearch from "Components/Movie/MovieSearch";
 import SeriesSearch from "Components/Series/SeriesSearch";
+import { Helmet } from "react-helmet";
 import styled from "styled-components";
 
 function Search() {
   return (
     <Wrapper>
+      <Helmet>
+        <title>검색 - Pilflix</title>
+      </Helmet>
       <Space />
       <MovieSearch />
       <SeriesSearch />
@@ -17,7 +21,7 @@ const Wrapper = styled.div`
 `;
 
 const Space = styled.div`
-  margin-top: 100px;
+  margin-top: 200px;
 `;
 
 export default Search;

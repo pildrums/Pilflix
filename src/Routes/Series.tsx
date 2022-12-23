@@ -5,6 +5,7 @@ import SeriesCarousel from "Components/Series/SeriesCarousel";
 import SeriesDetail from "Components/Series/SeriesDetail";
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -31,6 +32,9 @@ function Series() {
   };
   return (
     <Wrapper>
+      <Helmet>
+        <title>시리즈 - Pilflix</title>
+      </Helmet>
       {isLoading ? (
         <Loader />
       ) : (
