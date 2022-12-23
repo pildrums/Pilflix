@@ -14,7 +14,9 @@ function SeriesSearch() {
   );
   return (
     <Wrapper>
-      <SearchTitle>시리즈 검색결과 - {keyword}</SearchTitle>
+      <SearchTitle>
+        시리즈 검색결과 - <span>{keyword}</span>
+      </SearchTitle>
       <SearchList>
         {data?.search_series.results.map((item) => (
           <SearchItem variants={itemVars} whileHover="hover" exit="exit">
@@ -48,6 +50,11 @@ const Wrapper = styled.div`
 
 const SearchTitle = styled.h2`
   font-size: 24px;
+  color: ${(props) => props.theme.white.darker};
+  span {
+    font-weight: 600;
+    color: ${(props) => props.theme.white.lighter};
+  }
 `;
 
 const SearchList = styled.div`
