@@ -16,7 +16,6 @@ function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch("/");
   const seriesMatch = useMatch("/series");
-  const searchMatch = useMatch("/search");
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const { scrollY } = useScroll();
@@ -74,11 +73,6 @@ function Header() {
           <Item>
             <Link to="series">
               시리즈 {seriesMatch && <Circle layoutId="circle" />}
-            </Link>
-          </Item>
-          <Item>
-            <Link to="search">
-              검색 {searchMatch && <Circle layoutId="circle" />}
             </Link>
           </Item>
         </Items>

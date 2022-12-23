@@ -6,18 +6,24 @@ import styled from "styled-components";
 import { makeImagePath } from "utils";
 
 interface ISeriesDetailProps {
-  seriesMatch: PathMatch<"seriesId"> | null;
+  seriesMatch?: PathMatch<"seriesId"> | null;
   seriesId: number;
   rowIndex?: number | string | null;
+  search?: string;
 }
 
-function SeriesDetail({ seriesMatch, seriesId, rowIndex }: ISeriesDetailProps) {
+function SeriesDetail({
+  seriesMatch,
+  seriesId,
+  rowIndex,
+  search,
+}: ISeriesDetailProps) {
   const navigate = useNavigate();
   const { data } = useQuery<IGetSeriesDetail>(["tv", seriesId], () =>
     getSeriesDetail(seriesId),
   );
   const onOverlayClick = () => {
-    navigate("/series");
+    search ? navigate(`/search?keyword=${search}`) : navigate("/search");
   };
   return (
     <>

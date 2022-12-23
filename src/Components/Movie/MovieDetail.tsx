@@ -6,18 +6,24 @@ import styled from "styled-components";
 import { makeImagePath } from "utils";
 
 interface IMovieDetailProps {
-  movieMatch: PathMatch<"movieId"> | null;
+  movieMatch?: PathMatch<"movieId"> | null;
   movieId: number;
   rowIndex?: number | string | null;
+  search?: string;
 }
 
-function MovieDetail({ movieMatch, movieId, rowIndex }: IMovieDetailProps) {
+function MovieDetail({
+  movieMatch,
+  movieId,
+  rowIndex,
+  search,
+}: IMovieDetailProps) {
   const navigate = useNavigate();
   const { data } = useQuery<IGetMovie>(["movie", movieId], () =>
     getMovie(movieId),
   );
   const onOverlayClick = () => {
-    navigate("/");
+    search ? navigate(`/search?keyword=${search}`) : navigate("/");
   };
   return (
     <>
