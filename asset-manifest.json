@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/Pilflix/static/js/main.fd9f93c0.js",
+    "index.html": "/Pilflix/index.html",
+    "main.fd9f93c0.js.map": "/Pilflix/static/js/main.fd9f93c0.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.fd9f93c0.js"
+  ]
+}
