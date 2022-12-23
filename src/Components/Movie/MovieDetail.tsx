@@ -41,13 +41,14 @@ function MovieDetail({ movieMatch, movieId, rowIndex }: IMovieDetailProps) {
                   String(data?.movie_detail.backdrop_path),
                 )})`,
               }}
-            />
-            <CardTitleContainer>
-              <CardTitle>{data?.movie_detail.title}</CardTitle>
-              <CardVote>
-                ★ {Number(data?.movie_detail.vote_average).toFixed(1)}
-              </CardVote>
-            </CardTitleContainer>
+            >
+              <CardTitleContainer>
+                <CardTitle>{data?.movie_detail.title}</CardTitle>
+                <CardVote>
+                  ★ {Number(data?.movie_detail.vote_average).toFixed(1)}
+                </CardVote>
+              </CardTitleContainer>
+            </CardCover>
             <CardContent>
               <CardGenres>
                 {data?.movie_detail.genres.map((item) => (
@@ -100,11 +101,12 @@ const CardCover = styled.div`
   background-position: center center;
   height: 400px;
   border-radius: 10px 10px 0 0;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 20px;
 `;
 
 const CardTitleContainer = styled.div`
-  position: relative;
-  top: -60px;
   display: flex;
   align-items: center;
 `;
@@ -132,15 +134,12 @@ const CardContent = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  position: relative;
 `;
 
 const CardGenres = styled.ul`
   display: flex;
   gap: 10px;
-  padding: 0 20px;
-  position: absolute;
-  top: -15px;
+  padding: 20px;
   li {
     border: 2px solid ${(props) => props.theme.white.lighter};
     text-align: center;
@@ -152,17 +151,14 @@ const CardGenres = styled.ul`
 
 const CardOverview = styled.p`
   padding: 20px;
-  position: absolute;
-  top: 30px;
   color: ${(props) => props.theme.white.lighter};
 `;
 
 const CardTimeContainer = styled.div`
-  position: absolute;
-  top: 230px;
   display: flex;
   flex-direction: column;
   padding: 0 20px;
+  gap: 10px;
 `;
 
 const Release = styled.span``;
