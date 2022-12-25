@@ -1,5 +1,6 @@
 import MovieSearch from "Components/Movie/MovieSearch";
 import SeriesSearch from "Components/Series/SeriesSearch";
+import { memo } from "react";
 import { Helmet } from "react-helmet";
 import styled from "styled-components";
 
@@ -24,4 +25,4 @@ const Space = styled.div`
   margin-top: 200px;
 `;
 
-export default Search;
+export default memo(Search);
