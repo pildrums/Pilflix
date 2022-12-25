@@ -23,7 +23,7 @@ function SeriesDetail({
     getSeriesDetail(seriesId),
   );
   const onOverlayClick = () => {
-    search ? navigate(`/search?keyword=${search}`) : navigate("/search");
+    search ? navigate(`/search?keyword=${search}`) : navigate("/series");
   };
   return (
     <>
