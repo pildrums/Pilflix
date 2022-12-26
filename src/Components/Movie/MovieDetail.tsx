@@ -90,10 +90,12 @@ function MovieDetail({
                       ))}
                     </Genre>
                   </ContentItem>
-                  <Overview>
-                    <p>{data?.movie_detail.tagline}</p>
-                    <p>{data?.movie_detail.overview}</p>
-                  </Overview>
+                  <OverviewContainer>
+                    {data?.movie_detail.tagline ? (
+                      <Tagline>{data?.movie_detail.tagline}</Tagline>
+                    ) : null}
+                    <Overview>{data?.movie_detail.overview}</Overview>
+                  </OverviewContainer>
                 </Content>
               </Info>
             </InfoContainer>
@@ -228,22 +230,23 @@ const Genre = styled.ul`
   }
 `;
 
-const Overview = styled.div`
+const OverviewContainer = styled.div`
   position: absolute;
   top: 58%;
-  padding-right: 40px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  p {
-    &:first-child {
-      font-size: 18px;
-      font-weight: 400;
-    }
-    &:last-child {
-      font-size: 14px;
-    }
-  }
+  `;
+
+const Tagline = styled.p`
+  font-size: 18px;
+  font-weight: 400;
+  `;
+
+const Overview = styled.p`
+  font-size: 14px;
+  color: #c1c1c1;
+  padding-right: 40px;
 `;
 
 export default memo(MovieDetail);

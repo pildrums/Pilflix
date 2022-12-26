@@ -67,19 +67,6 @@ const BannerContent = styled.div`
   gap: 15px;
 `;
 
-const Vote = styled.span`
-  width: 80px;
-  background: transparent;
-  color: ${(props) => props.theme.white.lighter};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px;
-  border: 1px solid ${(props) => props.theme.white.lighter};
-  border-radius: 10px;
-  user-select: none;
-`;
-
 const BannerButton = styled.button`
   width: 160px;
   height: 50px;
