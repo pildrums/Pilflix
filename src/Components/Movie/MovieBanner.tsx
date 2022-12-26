@@ -98,7 +98,7 @@ const BannerButton = styled.button`
       div {
         opacity: 1;
         top: 120%;
-        left: -22px;
+        left: 0;
         transition: all 0.2s ease-in-out;
       }
     }
@@ -111,7 +111,7 @@ const BannerButton = styled.button`
 const NotWorking = styled.div`
   position: absolute;
   top: 120%;
-  left: -22px;
+  left: 0;
   border: 1px solid #fff;
   padding: 3px;
   background: #fff;
