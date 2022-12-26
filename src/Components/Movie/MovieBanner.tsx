@@ -87,7 +87,8 @@ const BannerButton = styled.button`
   }
   &:first-child {
     background: rgba(0, 0, 0, 0.6);
-    color: #fff;
+    color: ${(props) => props.theme.white.lighter};
+    border: 2px solid ${(props) => props.theme.white.lighter};
   }
   &:hover {
     scale: 1.1;

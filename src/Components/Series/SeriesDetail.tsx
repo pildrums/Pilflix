@@ -4,6 +4,9 @@ import { useQuery } from "react-query";
 import { PathMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { makeImagePath } from "utils";
+import { MdClose } from "react-icons/md";
+import ReactStars from "react-stars";
+import { memo } from "react";
 
 interface ISeriesDetailProps {
   seriesMatch?: PathMatch<"seriesId"> | null;
@@ -34,36 +37,64 @@ function SeriesDetail({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           />
-          <Card
+          <Detail
             variants={detailVariants}
             layoutId={String((rowIndex + "_" || "") + seriesId)}
             initial="initial"
             animate="click"
             exit="exit"
           >
-            <CardCover
+            <DetailCover
               style={{
                 backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
                   String(data?.series_detail.backdrop_path),
                 )})`,
               }}
             >
-              <CardTitleContainer>
-                <CardTitle>{data?.series_detail.name}</CardTitle>
-                <CardVote>
-                  ★ {Number(data?.series_detail.vote_average).toFixed(1)}
-                </CardVote>
-              </CardTitleContainer>
-            </CardCover>
-            <CardContent>
-              <CardGenres>
-                {data?.series_detail.genres.map((item) => (
-                  <li key={item.id}>{item.name}</li>
-                ))}
-              </CardGenres>
-              <CardOverview>{data?.series_detail.overview}</CardOverview>
-            </CardContent>
-          </Card>
+              <CloseButton onClick={onOverlayClick}>
+                <MdClose />
+              </CloseButton>
+            </DetailCover>
+            <InfoContainer>
+              <Info>
+                <Poster
+                  src={makeImagePath(data?.series_detail.poster_path || "")}
+                />
+                <Content>
+                  <Title>
+                    <h1>{data?.series_detail.name}</h1>
+                    <h2>{data?.series_detail.original_name}</h2>
+                    <VoteAverage>
+                      <ReactStars
+                        count={5}
+                        value={
+                          data?.series_detail.vote_average
+                            ? data.series_detail.vote_average / 2
+                            : 0
+                        }
+                        color1="#e6e6e6"
+                        color2="#fc3"
+                        size={20}
+                        edit={false}
+                      />
+                      <span>{data?.series_detail.vote_average.toFixed(1)}</span>
+                    </VoteAverage>
+                  </Title>
+                  <ContentItem>
+                    <Genre>
+                      ∙
+                      {data?.series_detail.genres.map((item) => (
+                        <li key={item.id}>{item.name}</li>
+                      ))}
+                    </Genre>
+                  </ContentItem>
+                  <OverviewContainer>
+                    <Overview>{data?.series_detail.overview}</Overview>
+                  </OverviewContainer>
+                </Content>
+              </Info>
+            </InfoContainer>
+          </Detail>
         </>
       ) : null}
     </>
@@ -85,9 +116,9 @@ const Overlay = styled(motion.div)`
   opacity: 0;
 `;
 
-const Card = styled(motion.div)`
-  width: 60vw;
-  height: 80vh;
+const Detail = styled(motion.div)`
+  width: 760px;
+  height: 760px;
   background: ${(props) => props.theme.black.lighter};
   position: fixed;
   top: 100px;
@@ -95,65 +126,117 @@ const Card = styled(motion.div)`
   right: 0;
   margin: 0 auto;
   border-radius: 10px;
+  overflow: auto;
 `;
 
-const CardCover = styled.div`
+const DetailCover = styled.div`
   width: 100%;
   background-size: cover;
   background-position: center center;
   height: 400px;
   border-radius: 10px 10px 0 0;
-  display: flex;
-  align-items: flex-end;
-  padding-bottom: 20px;
+  position: relative;
 `;
 
-const CardTitleContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const CardTitle = styled.h2`
-  color: ${(props) => props.theme.white.lighter};
-  padding: 0 20px;
-  font-size: 32px;
-`;
-
-const CardVote = styled.span`
-  width: 80px;
-  background: transparent;
-  color: ${(props) => props.theme.white.lighter};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px;
-  border: 1px solid ${(props) => props.theme.white.lighter};
-  border-radius: 10px;
-  user-select: none;
-`;
-
-const CardContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const CardGenres = styled.ul`
-  display: flex;
-  gap: 10px;
-  padding: 20px;
-  li {
-    border: 2px solid ${(props) => props.theme.white.lighter};
-    text-align: center;
-    line-height: 40px;
-    border-radius: 10px;
-    padding: 0 15px;
+const CloseButton = styled.button`
+  position: absolute;
+  right: 0;
+  margin: 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 30px;
+  padding: 0;
+  svg {
+    transition: all 0.3s ease-in-out;
+    color: ${(props) => props.theme.white.lighter};
+  }
+  &:hover {
+    svg {
+      color: ${(props) => props.theme.red};
+      scale: 1.4;
+    }
   }
 `;
 
-const CardOverview = styled.p`
-  padding: 20px;
-  color: ${(props) => props.theme.white.lighter};
+const InfoContainer = styled.div`
+  position: absolute;
+  top: 28%;
+  padding: 0 40px;
+  img {
+    width: 40%;
+  }
 `;
 
-export default SeriesDetail;
+const Info = styled.div`
+  display: flex;
+  gap: 30px;
+  align-items: center;
+`;
+
+const Poster = styled.img`
+  border-radius: 10px;
+  position: relative;
+  top: 80px;
+  box-shadow: 2px 2px 4px rgba(47, 47, 47, 0.8);
+  transition: scale 0.2s ease-in-out;
+  &:hover {
+    scale: 1.1;
+  }
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Title = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 25%;
+  h1 {
+    font-size: 28px;
+  }
+  h2 {
+    font-size: 16px;
+    color: ${(props) => props.theme.white.darker};
+  }
+`;
+
+const VoteAverage = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+`;
+
+const ContentItem = styled.div`
+  position: absolute;
+  top: 55%;
+  display: flex;
+  gap: 15px;
+`;
+
+const Genre = styled.ul`
+  display: flex;
+  li {
+    margin-left: 4px;
+  }
+`;
+
+const OverviewContainer = styled.div`
+  position: absolute;
+  top: 66%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const Overview = styled.p`
+  font-size: 14px;
+  color: #c1c1c1;
+  padding-right: 40px;
+`;
+
+export default memo(SeriesDetail);

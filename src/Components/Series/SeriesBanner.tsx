@@ -2,6 +2,7 @@ import { IGetSeries } from "API/SeriesAPI";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { makeImagePath } from "utils";
+import { MdInfoOutline, MdPlayCircle } from "react-icons/md";
 
 interface ISeriesBannerProps {
   data: IGetSeries | undefined;
@@ -21,13 +22,17 @@ function SeriesBanner({ data }: ISeriesBannerProps) {
       <Title>{data?.popular_series.results[0].name}</Title>
       <Overview>{data?.popular_series.results[0].overview}</Overview>
       <BannerContent>
-        <Vote>★ {data?.popular_series.results[0].vote_average}</Vote>
+        <BannerButton>
+          <MdPlayCircle />
+          재생하기
+        </BannerButton>
         <BannerButton
           onClick={() =>
             onBoxClicked(Number(data?.popular_series.results[0].id))
           }
         >
-          자세히보기
+          <MdInfoOutline />
+          상세정보
         </BannerButton>
       </BannerContent>
     </Banner>
@@ -62,29 +67,32 @@ const BannerContent = styled.div`
   gap: 10px;
 `;
 
-const Vote = styled.span`
-  width: 80px;
-  background: transparent;
-  color: ${(props) => props.theme.white.lighter};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px;
-  border: 1px solid ${(props) => props.theme.white.lighter};
-  border-radius: 10px;
-  user-select: none;
-`;
-
 const BannerButton = styled.button`
   width: 160px;
   height: 50px;
   user-select: none;
   cursor: pointer;
-  background: ${(props) => props.theme.white.darker};
+  background: ${(props) => props.theme.white.lighter};
   border: none;
   border-radius: 10px;
   font-size: 16px;
   line-height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  transition: scale 0.3s ease-in-out;
+  svg {
+    font-size: 20px;
+  }
+  &:first-child {
+    background: rgba(0, 0, 0, 0.6);
+    color: ${(props) => props.theme.white.lighter};
+    border: 2px solid ${(props) => props.theme.white.lighter};
+  }
+  &:hover {
+    scale: 1.1;
+  }
 `;
 
 export default SeriesBanner;
