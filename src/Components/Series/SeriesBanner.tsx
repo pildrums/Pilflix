@@ -25,6 +25,10 @@ function SeriesBanner({ data }: ISeriesBannerProps) {
         <BannerButton>
           <MdPlayCircle />
           재생하기
+          <NotWorking>
+            <MdInfoOutline />
+            재생하기는 현재 서비스되지 않습니다.
+          </NotWorking>
         </BannerButton>
         <BannerButton
           onClick={() =>
@@ -89,10 +93,39 @@ const BannerButton = styled.button`
     background: rgba(0, 0, 0, 0.6);
     color: ${(props) => props.theme.white.lighter};
     border: 2px solid ${(props) => props.theme.white.lighter};
+    cursor: not-allowed;
+    &:hover {
+      div {
+        opacity: 1;
+        top: 120%;
+        left: -22px;
+        transition: all 0.2s ease-in-out;
+      }
+    }
   }
   &:hover {
     scale: 1.1;
   }
+`;
+
+const NotWorking = styled.div`
+  position: absolute;
+  top: 120%;
+  left: -22px;
+  border: 1px solid #fff;
+  padding: 3px;
+  background: #fff;
+  border-radius: 10px;
+  color: ${(props) => props.theme.red};
+  opacity: 0;
+  font-size: 12px;
+  width: 200px;
+  line-height: 30px;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default SeriesBanner;
