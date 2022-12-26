@@ -22,11 +22,7 @@ function MovieBanner({ data }: IMovieBannerProps) {
       <Title>{data?.playing_movie.results[0].title}</Title>
       <Overview>{data?.playing_movie.results[0].overview}</Overview>
       <BannerContent>
-        <BannerButton
-          onClick={() =>
-            onBoxClicked(Number(data?.playing_movie.results[0].id))
-          }
-        >
+        <BannerButton>
           <MdPlayCircle />
           재생하기
         </BannerButton>
@@ -56,7 +52,7 @@ const Banner = styled.div<{ bgphoto: string }>`
 
 const Title = styled.h2`
   font-size: 40px;
-  font-weight: 700;
+  font-weight: 400;
   margin-bottom: 20px;
 `;
 
@@ -66,7 +62,7 @@ const Overview = styled.p`
 `;
 
 const BannerContent = styled.div`
-  margin-top: 10px;
+  margin-top: 24px;
   display: flex;
   gap: 15px;
 `;

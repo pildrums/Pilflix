@@ -41,6 +41,7 @@ interface IMovieDetail {
   genres: IMovieGenres[];
   id: number;
   title?: string;
+  original_title: string;
   overview: string;
   popularity: number;
   release_date?: string;
