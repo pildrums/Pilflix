@@ -120,7 +120,7 @@ const logoVars = {
 };
 
 const navVars = {
-  top: { background: "rgba(0, 0, 0, 0.1)" },
+  top: { background: "rgba(0, 0, 0, 0.2)" },
   scroll: { background: "rgba(0, 0, 0, 1)" },
 };
 
@@ -134,7 +134,6 @@ const Nav = styled(motion.nav)`
   top: 0;
   font-size: 14px;
   padding: 20px 60px;
-  color: #fff;
   z-index: 9999;
 `;
 

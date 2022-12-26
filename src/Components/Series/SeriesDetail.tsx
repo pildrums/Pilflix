@@ -35,7 +35,7 @@ function SeriesDetail({
             exit={{ opacity: 0 }}
           />
           <Card
-            variants={modalVariants}
+            variants={detailVariants}
             layoutId={String((rowIndex + "_" || "") + seriesId)}
             initial="initial"
             animate="click"
@@ -70,7 +70,7 @@ function SeriesDetail({
   );
 }
 
-const modalVariants = {
+const detailVariants = {
   initial: { opacity: 0 },
   click: { opacity: 1 },
   exit: { opacity: 0 },

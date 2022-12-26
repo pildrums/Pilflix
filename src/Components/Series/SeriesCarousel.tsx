@@ -167,9 +167,7 @@ const boxVars = {
   },
   hover: {
     scale: 1.3,
-    y: -50,
     transition: {
-      delay: 1.1,
       duration: 0.3,
       type: "tween",
     },
@@ -180,7 +178,6 @@ const infoVars = {
   hover: {
     opacity: 1,
     transition: {
-      delay: 1.1,
       duration: 0.3,
       type: "tween",
     },
@@ -290,9 +287,9 @@ const Info = styled(motion.div)`
   padding: 10px;
   background: ${(props) => props.theme.black.lighter};
   opacity: 0;
-  position: absolute;
+  position: relative;
   width: 100%;
-  bottom: 0;
+  top: 85%;
   display: flex;
   justify-content: center;
   align-items: center;

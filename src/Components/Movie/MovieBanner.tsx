@@ -2,6 +2,7 @@ import { IGetMovies } from "API/movieAPI";
 import { makeImagePath } from "utils";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { MdInfoOutline, MdPlayCircle } from "react-icons/md";
 
 interface IMovieBannerProps {
   data: IGetMovies | undefined;
@@ -21,13 +22,21 @@ function MovieBanner({ data }: IMovieBannerProps) {
       <Title>{data?.playing_movie.results[0].title}</Title>
       <Overview>{data?.playing_movie.results[0].overview}</Overview>
       <BannerContent>
-        <Vote>★ {data?.playing_movie.results[0].vote_average}</Vote>
         <BannerButton
           onClick={() =>
             onBoxClicked(Number(data?.playing_movie.results[0].id))
           }
         >
-          자세히보기
+          <MdPlayCircle />
+          재생하기
+        </BannerButton>
+        <BannerButton
+          onClick={() =>
+            onBoxClicked(Number(data?.playing_movie.results[0].id))
+          }
+        >
+          <MdInfoOutline />
+          상세정보
         </BannerButton>
       </BannerContent>
     </Banner>
@@ -59,7 +68,7 @@ const Overview = styled.p`
 const BannerContent = styled.div`
   margin-top: 10px;
   display: flex;
-  gap: 10px;
+  gap: 15px;
 `;
 
 const Vote = styled.span`
@@ -80,11 +89,26 @@ const BannerButton = styled.button`
   height: 50px;
   user-select: none;
   cursor: pointer;
-  background: ${(props) => props.theme.white.darker};
+  background: ${(props) => props.theme.white.lighter};
   border: none;
   border-radius: 10px;
   font-size: 16px;
   line-height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  transition: scale 0.3s ease-in-out;
+  svg {
+    font-size: 20px;
+  }
+  &:first-child {
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+  }
+  &:hover {
+    scale: 1.1;
+  }
 `;
 
 export default MovieBanner;

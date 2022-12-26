@@ -12,5 +12,8 @@ declare module "styled-components" {
       darker: string;
       lighter: string;
     };
+    green: {
+      lighter: string;
+    };
   }
 }
