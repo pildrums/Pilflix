@@ -23,6 +23,6 @@ const Wrapper = styled.div`
 
 const Space = styled.div`
   margin-top: 200px;
-`; 
+`;
 
 export default memo(Search);

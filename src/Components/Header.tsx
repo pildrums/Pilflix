@@ -81,7 +81,7 @@ function Header() {
         <Search onSubmit={handleSubmit(onValid)}>
           <motion.svg
             onClick={onSearch}
-            animate={{ x: searchOpen ? -180 : 0 }}
+            animate={{ x: searchOpen ? -170 : 0 }}
             transition={{ type: "linear" }}
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -171,11 +171,13 @@ const Item = styled.li`
 const Search = styled.form`
   color: #fff;
   display: flex;
+  justify-content: center;
   align-items: center;
   position: relative;
   cursor: pointer;
   svg {
-    height: 25px;
+    height: 24px;
+    margin-right: 8px;
   }
 `;
 
@@ -195,15 +197,16 @@ const Input = styled(motion.input)`
   transform-origin: right center;
   position: absolute;
   right: 0;
-  padding: 5px 10px;
-  padding-left: 40px;
+  padding: 8px 16px;
+  padding-left: 46px;
   z-index: -1;
   color: #fff;
-  font-size: 16px;
+  font-size: 14px;
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid ${(props) => props.theme.white.lighter};
   &::placeholder {
     color: #ccc;
+    font-size: 12px;
   }
 `;
 
