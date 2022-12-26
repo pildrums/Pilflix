@@ -236,12 +236,12 @@ const OverviewContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  `;
+`;
 
 const Tagline = styled.p`
   font-size: 18px;
   font-weight: 400;
-  `;
+`;
 
 const Overview = styled.p`
   font-size: 14px;
