@@ -81,17 +81,34 @@ function Search() {
             </SearchResultTitle>
             <SearchList>
               {data?.search_series.results.map((series) => (
-                <SearchItem
-                  key={series.id}
-                  variants={itemVars}
-                  initial="normal"
-                  whileHover="hover"
-                  poster={makeImagePath(series.poster_path)}
-                >
-                  <SearchInfo variants={infoVars}>
-                    <h4>{series.name}</h4>
-                  </SearchInfo>
-                </SearchItem>
+                <>
+                  {series.poster_path ? (
+                    <SearchItem
+                      key={series.id}
+                      variants={itemVars}
+                      initial="normal"
+                      whileHover="hover"
+                      poster={makeImagePath(series.poster_path)}
+                    >
+                      <SearchInfo variants={infoVars}>
+                        <h4>{series.name}</h4>
+                      </SearchInfo>
+                    </SearchItem>
+                  ) : (
+                    <SearchItem
+                      key={series.id}
+                      variants={itemVars}
+                      initial="normal"
+                      whileHover="hover"
+                      poster={makeImagePath(series.poster_path)}
+                    >
+                      <span>이미지가 없습니다.</span>
+                      <SearchInfo variants={infoVars}>
+                        <h4>{series.name}</h4>
+                      </SearchInfo>
+                    </SearchItem>
+                  )}
+                </>
               ))}
             </SearchList>
           </SearchResult>
@@ -174,7 +191,7 @@ const SearchItem = styled(motion.li)<{ poster: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #000;
+  background: ${props => props.theme.black.veryDark};
   background-image: url(${(props) => props.poster});
   background-size: cover;
   height: 250px;
