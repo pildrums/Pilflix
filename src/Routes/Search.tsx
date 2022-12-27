@@ -1,5 +1,6 @@
 import { getSearch, IGetSearch } from "API/SearchAPI";
 import Loader from "Components/Loader";
+import SearchDetail from "Components/Search/SearchDetail";
 import { AnimatePresence, motion } from "framer-motion";
 import { memo } from "react";
 import { Helmet } from "react-helmet";
@@ -13,10 +14,6 @@ import {
 import styled from "styled-components";
 import { makeImagePath } from "utils";
 
-interface ISearchForm {
-  searchKeyword: string;
-}
-
 function Search() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,69 +21,95 @@ function Search() {
   const { data, isLoading } = useQuery<IGetSearch>(["search", keyword], () =>
     getSearch(String(keyword)),
   );
-  const onValid = (data: ISearchForm) => {
-    navigate(`/search?keyword=${data.searchKeyword}`);
+  const searchMatch: PathMatch<string> | null = useMatch(
+    `search/:menuName/:searchId`,
+  );
+  const onOverlayCilck = () => {
+    navigate(`/search?keyword=${keyword}`);
   };
-  const searchMatch: PathMatch<string> | null =
-    useMatch(`search/:menuName/:id`);
   return (
     <Wrapper>
       <Helmet>
-        <title>검색 - Pilflix</title>
+        <title>{keyword}: 검색결과 - Pilflix</title>
       </Helmet>
       {isLoading ? (
         <Loader />
       ) : (
         <>
           <Space />
-          <MovieResult>
-            <MovieResultTitle>
+          <SearchResult>
+            <SearchResultTitle>
               영화 검색결과 - <span>{keyword}</span>
-            </MovieResultTitle>
-            <MovieList>
+            </SearchResultTitle>
+            <SearchList>
               {data?.search_movies.results.map((movie) => (
-                <MovieItem
-                  key={movie.id}
-                  variants={itemVars}
-                  initial="normal"
-                  whileHover="hover"
-                >
+                <>
                   {movie.poster_path ? (
-                    <img src={makeImagePath(movie.poster_path)} alt="" />
+                    <SearchItem
+                      key={movie.id}
+                      variants={itemVars}
+                      initial="normal"
+                      whileHover="hover"
+                      poster={makeImagePath(movie.poster_path)}
+                    >
+                      <SearchInfo variants={infoVars}>
+                        <h4>{movie.title}</h4>
+                      </SearchInfo>
+                    </SearchItem>
                   ) : (
-                    <span>이미지가 없습니다.</span>
+                    <SearchItem
+                      key={movie.id}
+                      variants={itemVars}
+                      initial="normal"
+                      whileHover="hover"
+                      poster={makeImagePath(movie.poster_path)}
+                    >
+                      <span>이미지가 없습니다.</span>
+                      <SearchInfo variants={infoVars}>
+                        <h4>{movie.title}</h4>
+                      </SearchInfo>
+                    </SearchItem>
                   )}
-                </MovieItem>
+                </>
               ))}
-            </MovieList>
-          </MovieResult>
+            </SearchList>
+          </SearchResult>
           <Space />
-          <SeriesResult>
-            <SeriesResultTitle>
+          <SearchResult>
+            <SearchResultTitle>
               시리즈 검색결과 - <span>{keyword}</span>
-            </SeriesResultTitle>
-            <SeriesList>
+            </SearchResultTitle>
+            <SearchList>
               {data?.search_series.results.map((series) => (
-                <SeriesItem
+                <SearchItem
                   key={series.id}
                   variants={itemVars}
                   initial="normal"
                   whileHover="hover"
+                  poster={makeImagePath(series.poster_path)}
                 >
-                  {series.poster_path ? (
-                    <img src={makeImagePath(series.poster_path)} alt="" />
-                  ) : (
-                    <span>이미지가 없습니다.</span>
-                  )}
-                </SeriesItem>
+                  <SearchInfo variants={infoVars}>
+                    <h4>{series.name}</h4>
+                  </SearchInfo>
+                </SearchItem>
               ))}
-            </SeriesList>
-          </SeriesResult>
+            </SearchList>
+          </SearchResult>
+          <Space />
+          <AnimatePresence>
+            {searchMatch ? <SearchDetail searchMatch={searchMatch} /> : null}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
   );
 }
+
+const detailVariants = {
+  initial: { opacity: 0 },
+  click: { opacity: 1 },
+  exit: { opacity: 0 },
+};
 
 const itemVars = {
   normal: {
@@ -101,23 +124,38 @@ const itemVars = {
   },
 };
 
+const infoVars = {
+  hover: {
+    opacity: 1,
+    transition: {
+      duration: 0.3,
+      type: "tween",
+    },
+  },
+};
+
 const Wrapper = styled.div`
   background: #000;
+  position: relative;
+  @media all and (min-width: 1024px) {
+    width: 768px;
+    margin: 0 auto;
+  }
 `;
 
 const Space = styled.div`
   margin-top: 150px;
 `;
 
-const MovieResult = styled.div`
+const SearchResult = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 40px;
   gap: 20px;
 `;
 
-const MovieResultTitle = styled.h1`
-  border-bottom: 2px solid #fff;
+const SearchResultTitle = styled.h1`
+  border-bottom: 1px solid #fff;
   font-size: 24px;
   line-height: 80px;
   span {
@@ -125,21 +163,24 @@ const MovieResultTitle = styled.h1`
   }
 `;
 
-const MovieList = styled.ul`
+const SearchList = styled.ul`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: 16px;
 `;
 
-const MovieItem = styled(motion.li)`
+const SearchItem = styled(motion.li)<{ poster: string }>`
   cursor: pointer;
-  border: 1px solid ${(props) => props.theme.white.darker};
   display: flex;
   justify-content: center;
   align-items: center;
   background: #000;
-  img {
-    width: 100%;
+  background-image: url(${(props) => props.poster});
+  background-size: cover;
+  height: 250px;
+  border-radius: 8px;
+  span {
+    position: absolute;
   }
   &:nth-child(4n) {
     transform-origin: center right;
@@ -149,12 +190,21 @@ const MovieItem = styled(motion.li)`
   }
 `;
 
-const SeriesResult = styled(MovieResult)``;
-
-const SeriesResultTitle = styled(MovieResultTitle)``;
-
-const SeriesList = styled(MovieList)``;
-
-const SeriesItem = styled(MovieItem)``;
+const SearchInfo = styled(motion.div)`
+  padding: 20px 10px;
+  background: ${(props) => props.theme.black.lighter};
+  opacity: 0;
+  position: relative;
+  width: 100%;
+  top: 42%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0 0 8px 8px;
+  h4 {
+    text-align: center;
+    font-size: 14px;
+  }
+`;
 
 export default memo(Search);
