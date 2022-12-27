@@ -4,14 +4,15 @@ import styled from "styled-components";
 
 interface SearchDetailProps {
   searchMatch: PathMatch<"searchId"> | null;
+  onOverlayCilck: () => void;
 }
 
-function SearchDetail({ searchMatch }: SearchDetailProps) {
+function SearchDetail({ searchMatch, onOverlayCilck }: SearchDetailProps) {
   return (
     <>
       {searchMatch ? (
         <>
-          <Overlay />
+          <Overlay onClick={onOverlayCilck} />
           <Detail>SearchDetail</Detail>
         </>
       ) : null}

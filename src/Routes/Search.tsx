@@ -22,10 +22,13 @@ function Search() {
     getSearch(String(keyword)),
   );
   const searchMatch: PathMatch<string> | null = useMatch(
-    `search/:menuName/:searchId`,
+    `search/?keyword=${keyword}/:searchId`,
   );
   const onOverlayCilck = () => {
     navigate(`/search?keyword=${keyword}`);
+  };
+  const onBoxClicked = (searchId: number) => {
+    navigate(`/search?keyword=${keyword}/${searchId}`);
   };
   return (
     <Wrapper>
@@ -36,6 +39,14 @@ function Search() {
         <Loader />
       ) : (
         <>
+          <AnimatePresence>
+            {searchMatch ? (
+              <SearchDetail
+                searchMatch={searchMatch}
+                onOverlayCilck={onOverlayCilck}
+              />
+            ) : null}
+          </AnimatePresence>
           <Space />
           <SearchResult>
             <SearchResultTitle>
@@ -63,6 +74,7 @@ function Search() {
                       initial="normal"
                       whileHover="hover"
                       poster={makeImagePath(movie.poster_path)}
+                      onClick={() => onBoxClicked(movie.id)}
                     >
                       <span>이미지가 없습니다.</span>
                       <SearchInfo variants={infoVars}>
@@ -113,9 +125,6 @@ function Search() {
             </SearchList>
           </SearchResult>
           <Space />
-          <AnimatePresence>
-            {searchMatch ? <SearchDetail searchMatch={searchMatch} /> : null}
-          </AnimatePresence>
         </>
       )}
     </Wrapper>
@@ -167,7 +176,7 @@ const Space = styled.div`
 const SearchResult = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 40px;
+  padding: 0 60px;
   gap: 20px;
 `;
 
@@ -191,7 +200,7 @@ const SearchItem = styled(motion.li)<{ poster: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: ${props => props.theme.black.veryDark};
+  background: ${(props) => props.theme.black.veryDark};
   background-image: url(${(props) => props.poster});
   background-size: cover;
   height: 250px;
@@ -222,6 +231,15 @@ const SearchInfo = styled(motion.div)`
     text-align: center;
     font-size: 14px;
   }
+`;
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 1;
 `;
 
 export default memo(Search);
