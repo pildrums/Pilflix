@@ -1,34 +1,28 @@
 import { getSearch, IGetSearch } from "API/SearchAPI";
 import Loader from "Components/Loader";
-import SearchDetail from "Components/Search/SearchDetail";
+import SeriesDetail from "Components/Series/SeriesDetail";
 import { AnimatePresence, motion } from "framer-motion";
-import { memo } from "react";
+import queryString from "query-string";
+import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
-import {
-  PathMatch,
-  useLocation,
-  useMatch,
-  useNavigate,
-} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { makeImagePath } from "utils";
+import SearchMovieDetail from "Components/Search/SearchMovieDetail";
+import SearchSeriesDetail from "Components/Search/SearchSeriesDetail";
 
 function Search() {
   const location = useLocation();
   const navigate = useNavigate();
-  const keyword = new URLSearchParams(location.search).get("keyword");
+  const { keyword, id } = queryString.parse(location.search);
+  const [type, setType] = useState("");
   const { data, isLoading } = useQuery<IGetSearch>(["search", keyword], () =>
     getSearch(String(keyword)),
   );
-  const searchMatch: PathMatch<string> | null = useMatch(
-    `search/?keyword=${keyword}/:searchId`,
-  );
-  const onOverlayCilck = () => {
-    navigate(`/search?keyword=${keyword}`);
-  };
-  const onBoxClicked = (searchId: number) => {
-    navigate(`/search?keyword=${keyword}/${searchId}`);
+  const onBoxClicked = (programId: number, type: string) => {
+    setType(type);
+    navigate(`/search?keyword=${keyword}&type=${type}&id=${programId}`);
   };
   return (
     <Wrapper>
@@ -39,92 +33,84 @@ function Search() {
         <Loader />
       ) : (
         <>
+          <Space />
+          <MovieResult>
+            <MovieResultTitle>
+              영화 검색결과 - <span>{keyword}</span>
+            </MovieResultTitle>
+            <MovieList>
+              {data?.search_movies.results.map((movie) => (
+                <MovieItem
+                  key={movie.id}
+                  variants={itemVars}
+                  initial="normal"
+                  whileHover="hover"
+                  poster={makeImagePath(movie.poster_path)}
+                  onClick={() => onBoxClicked(movie.id, "movie")}
+                >
+                  {movie.poster_path ? (
+                    <MovieInfo variants={infoVars}>
+                      <h4>{movie.title}</h4>
+                    </MovieInfo>
+                  ) : (
+                    <MovieInfo variants={infoVars}>
+                      <span>이미지가 없습니다.</span>
+                      <h4>{movie.title}</h4>
+                    </MovieInfo>
+                  )}
+                </MovieItem>
+              ))}
+            </MovieList>
+          </MovieResult>
+          <Space />
+          <SeriesResult>
+            <SeriesResultTitle>
+              시리즈 검색결과 - <span>{keyword}</span>
+            </SeriesResultTitle>
+            <SeriesList>
+              {data?.search_series.results.map((series) => (
+                <SeriesItem
+                  key={series.id}
+                  variants={itemVars}
+                  initial="normal"
+                  whileHover="hover"
+                  poster={makeImagePath(series.poster_path)}
+                  onClick={() => onBoxClicked(series.id, "series")}
+                >
+                  {series.poster_path ? (
+                    <SeriesInfo variants={infoVars}>
+                      <h4>{series.name}</h4>
+                    </SeriesInfo>
+                  ) : (
+                    <SeriesInfo variants={infoVars}>
+                      <span>이미지가 없습니다.</span>
+                      <h4>{series.name}</h4>
+                    </SeriesInfo>
+                  )}
+                </SeriesItem>
+              ))}
+            </SeriesList>
+          </SeriesResult>
+          <Space />
           <AnimatePresence>
-            {searchMatch ? (
-              <SearchDetail
-                searchMatch={searchMatch}
-                onOverlayCilck={onOverlayCilck}
-              />
+            {!id ? null : type === "movie" ? (
+              <>
+                <SearchMovieDetail
+                  movieId={Number(id)}
+                  rowIndex={type}
+                  search={String(keyword)}
+                />
+              </>
+            ) : type === "series" ? (
+              <>
+                <SearchSeriesDetail
+                  seriesId={Number(id)}
+                  rowIndex={type}
+                  search={String(keyword)}
+                />
+              </>
             ) : null}
           </AnimatePresence>
-          <Space />
-          <SearchResult>
-            <SearchResultTitle>
-              영화 검색결과 - <span>{keyword}</span>
-            </SearchResultTitle>
-            <SearchList>
-              {data?.search_movies.results.map((movie) => (
-                <>
-                  {movie.poster_path ? (
-                    <SearchItem
-                      key={movie.id}
-                      variants={itemVars}
-                      initial="normal"
-                      whileHover="hover"
-                      poster={makeImagePath(movie.poster_path)}
-                    >
-                      <SearchInfo variants={infoVars}>
-                        <h4>{movie.title}</h4>
-                      </SearchInfo>
-                    </SearchItem>
-                  ) : (
-                    <SearchItem
-                      key={movie.id}
-                      variants={itemVars}
-                      initial="normal"
-                      whileHover="hover"
-                      poster={makeImagePath(movie.poster_path)}
-                      onClick={() => onBoxClicked(movie.id)}
-                    >
-                      <span>이미지가 없습니다.</span>
-                      <SearchInfo variants={infoVars}>
-                        <h4>{movie.title}</h4>
-                      </SearchInfo>
-                    </SearchItem>
-                  )}
-                </>
-              ))}
-            </SearchList>
-          </SearchResult>
-          <Space />
-          <SearchResult>
-            <SearchResultTitle>
-              시리즈 검색결과 - <span>{keyword}</span>
-            </SearchResultTitle>
-            <SearchList>
-              {data?.search_series.results.map((series) => (
-                <>
-                  {series.poster_path ? (
-                    <SearchItem
-                      key={series.id}
-                      variants={itemVars}
-                      initial="normal"
-                      whileHover="hover"
-                      poster={makeImagePath(series.poster_path)}
-                    >
-                      <SearchInfo variants={infoVars}>
-                        <h4>{series.name}</h4>
-                      </SearchInfo>
-                    </SearchItem>
-                  ) : (
-                    <SearchItem
-                      key={series.id}
-                      variants={itemVars}
-                      initial="normal"
-                      whileHover="hover"
-                      poster={makeImagePath(series.poster_path)}
-                    >
-                      <span>이미지가 없습니다.</span>
-                      <SearchInfo variants={infoVars}>
-                        <h4>{series.name}</h4>
-                      </SearchInfo>
-                    </SearchItem>
-                  )}
-                </>
-              ))}
-            </SearchList>
-          </SearchResult>
-          <Space />
         </>
       )}
     </Wrapper>
@@ -173,14 +159,14 @@ const Space = styled.div`
   margin-top: 150px;
 `;
 
-const SearchResult = styled.div`
+const MovieResult = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 60px;
   gap: 20px;
 `;
 
-const SearchResultTitle = styled.h1`
+const MovieResultTitle = styled.h1`
   border-bottom: 1px solid #fff;
   font-size: 24px;
   line-height: 80px;
@@ -189,13 +175,13 @@ const SearchResultTitle = styled.h1`
   }
 `;
 
-const SearchList = styled.ul`
+const MovieList = styled.ul`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 `;
 
-const SearchItem = styled(motion.li)<{ poster: string }>`
+const MovieItem = styled(motion.li)<{ poster: string }>`
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -216,7 +202,7 @@ const SearchItem = styled(motion.li)<{ poster: string }>`
   }
 `;
 
-const SearchInfo = styled(motion.div)`
+const MovieInfo = styled(motion.div)`
   padding: 20px 10px;
   background: ${(props) => props.theme.black.lighter};
   opacity: 0;
@@ -242,4 +228,10 @@ const Overlay = styled.div`
   opacity: 1;
 `;
 
-export default memo(Search);
+const SeriesResult = styled(MovieResult)``;
+const SeriesResultTitle = styled(MovieResultTitle)``;
+const SeriesList = styled(MovieList)``;
+const SeriesItem = styled(MovieItem)``;
+const SeriesInfo = styled(MovieInfo)``;
+
+export default Search;

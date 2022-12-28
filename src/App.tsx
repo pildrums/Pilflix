@@ -16,8 +16,7 @@ function App() {
           <Route path="/series" element={<Series />} />
           <Route path="/series/:seriesId" element={<Series />} />
           <Route path="/search" element={<Search />} />
-          {/* Search에 관한 쿼리 확인 필요 */}
-          <Route path="/search/:keyword/:searchId" element={<Search />} />
+          {/* <Route path="/search/:searchId" element={<Search />} /> */}
           <Route path="/*" element={<Error />} />
         </Routes>
       </Router>
